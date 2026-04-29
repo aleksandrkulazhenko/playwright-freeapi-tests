@@ -16,7 +16,7 @@ for (const { price } of priceCases) {
         mainImage: {
           name: 'icon.png',
           mimeType: 'image/png',
-          buffer: fs.readFileSync(path.join(__dirname, '../data/icon.png')),
+          buffer: fs.readFileSync(path.join(__dirname, '../../data/products.json')),
         },
       },
     });
