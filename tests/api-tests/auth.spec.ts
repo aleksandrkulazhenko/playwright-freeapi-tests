@@ -6,10 +6,13 @@ test.describe.serial('Авторизация и пользователи', () =>
   });
 
   test('POST логин и получение токена', async ({ authClient }) => {
+    await authClient.register();
     await authClient.login();
   });
 
   test('GET получение информации о залогиненном пользователе', async ({ authClient }) => {
+    await authClient.register();
+    await authClient.login();
     await authClient.getCurrentUser();
   });
 });

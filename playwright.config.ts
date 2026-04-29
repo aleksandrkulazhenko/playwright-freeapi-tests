@@ -14,7 +14,9 @@ export default defineConfig({
   use: {
     baseURL: 'https://api.freeapi.app',
     extraHTTPHeaders: {
-      Authorization: `Bearer ${process.env.API_TOKEN}`,
+      get Authorization() {
+        return `Bearer ${process.env.API_TOKEN}`;
+      },
     },
     trace: 'on-first-retry',
   },

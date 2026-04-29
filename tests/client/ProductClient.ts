@@ -2,20 +2,7 @@ import { APIRequestContext, APIResponse, expect } from '@playwright/test';
 import * as fs from 'fs';
 import { faker } from '@faker-js/faker';
 import * as path from 'path';
-
-interface Product {
-  [key: string]: string | number | boolean | { name: string; mimeType: string; buffer: Buffer };
-  name: string;
-  description: string;
-  price: string;
-  stock: string;
-  category: string;
-  mainImage: {
-    name: string;
-    mimeType: string;
-    buffer: Buffer;
-  };
-}
+import { ProductFactory, Product } from '../factory/ProductFactory';
 
 export class ProductClient {
   readonly request: APIRequestContext;
@@ -25,18 +12,7 @@ export class ProductClient {
 
   constructor(request: APIRequestContext) {
     this.request = request;
-    this.newProduct = {
-      name: faker.commerce.productName(),
-      description: faker.commerce.productDescription(),
-      price: faker.number.int({ min: 10, max: 9999 }).toString(),
-      stock: faker.number.int({ min: 1, max: 100 }).toString(),
-      category: process.env.CATEGORY_ID || 'default_category',
-      mainImage: {
-        name: 'icon.png',
-        mimeType: 'image/png',
-        buffer: fs.readFileSync(path.join(__dirname, '../../data/icon.png')),
-      },
-    };
+    this.newProduct = ProductFactory.build();
   }
 
   async getAllProducts() {
@@ -72,7 +48,6 @@ export class ProductClient {
   }
 
   async findProduct() {
-    await this.createNewProduct();
     const response = await this.request.get(
       `https://api.freeapi.app/api/v1/ecommerce/products/${this.productId}`,
     );
@@ -84,7 +59,6 @@ export class ProductClient {
   }
 
   async updateProductPrice() {
-    await this.createNewProduct();
     const newPrice = faker.number.int({ min: 10, max: 9999 }).toString();
 
     const response = await this.request.patch(
@@ -103,7 +77,6 @@ export class ProductClient {
   }
 
   async deleteProduct() {
-    await this.createNewProduct();
     const response = await this.request.delete(
       `https://api.freeapi.app/api/v1/ecommerce/products/${this.productId}`,
     );

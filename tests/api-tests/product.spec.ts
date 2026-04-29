@@ -14,14 +14,17 @@ test.describe.serial('CRUD продуктов', () => {
   });
 
   test('GET поиск созданного продукта по ID и проверка имени', async ({ productClient }) => {
+    await productClient.createNewProduct();
     await productClient.findProduct();
   });
 
   test('PATCH обновление и проверка цены продукта', async ({ productClient }) => {
+    await productClient.createNewProduct();
     await productClient.updateProductPrice();
   });
 
   test('DELETE удаление продукта', async ({ productClient }) => {
+    await productClient.createNewProduct();
     await productClient.deleteProduct();
   });
 });
