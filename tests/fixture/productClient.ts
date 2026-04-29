@@ -9,7 +9,6 @@ export const test = base.extend<MyFixtures>({
   productClient: async ({ request }, use) => {
     const productClient = new ProductClient(request);
     await use(productClient);
-    await productClient.cleanup();
   },
 });
 export { expect } from '@playwright/test';
