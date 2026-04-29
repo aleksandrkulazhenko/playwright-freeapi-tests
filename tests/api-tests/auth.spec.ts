@@ -1,19 +1,15 @@
-import { test } from '@playwright/test';
-import { AuthClient } from '../client/AuthClient';
+import { test } from '../fixture/authFixture';
 
 test.describe.serial('Авторизация и пользователи', () => {
-  test('POST регистрация нового пользователя', async ({ request }) => {
-    const authClient = new AuthClient(request);
-    await authClient.register();
+  test('POST регистрация нового пользователя', async ({ authFixture }) => {
+    await authFixture.register();
   });
 
-  test('POST логин и получение токена', async ({ request }) => {
-    const authClient = new AuthClient(request);
-    await authClient.login();
+  test('POST логин и получение токена', async ({ authFixture }) => {
+    await authFixture.login();
   });
 
-  test('GET получение информации о залогиненном пользователе', async ({ request }) => {
-    const authClient = new AuthClient(request);
-    await authClient.getCurrentUser();
+  test('GET получение информации о залогиненном пользователе', async ({ authFixture }) => {
+    await authFixture.getCurrentUser();
   });
 });
