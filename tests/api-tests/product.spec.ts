@@ -1,4 +1,4 @@
-import { test } from '../fixture/productClient';
+import { test } from '../fixture/ProductFixture';
 
 test('GET всех продуктов, проверка cтатуса 200 и сохранение локально', async ({
   productClient,

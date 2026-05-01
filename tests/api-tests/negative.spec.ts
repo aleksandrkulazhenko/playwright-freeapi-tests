@@ -1,4 +1,4 @@
-import { test } from '../fixture/negativeClient';
+import { test } from '../fixture/NegativeFixture';
 
 test.describe('Поиск багов', () => {
   test('GET продукт с невалидным ID (404)', async ({ negativeClient }) => {

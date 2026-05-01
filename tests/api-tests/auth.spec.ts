@@ -1,4 +1,4 @@
-import { test } from '../fixture/authClient';
+import { test } from '../fixture/AuthFixture';
 
 test.describe.serial('Авторизация и пользователи', () => {
   test('POST регистрация нового пользователя', async ({ authClient }) => {
