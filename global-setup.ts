@@ -23,6 +23,7 @@ async function globalSetup() {
 
   const token = body.data.accessToken;
   process.env.API_TOKEN = token;
+
   const categoryResponse = await context.post(
     'https://api.freeapi.app/api/v1/ecommerce/categories',
     {

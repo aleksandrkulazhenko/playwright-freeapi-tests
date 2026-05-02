@@ -1,4 +1,3 @@
-// tests/factories/UserFactory.ts
 import { faker } from '@faker-js/faker';
 
 export interface User {
@@ -11,7 +10,7 @@ export interface User {
 export const UserFactory = {
   build: (overrides: Partial<User> = {}): User => ({
     username: faker.internet.username().toLowerCase(),
-    email: faker.internet.email(),
+    email: faker.internet.email().toLowerCase(),
     password: 'Test1234!',
     role: 'ADMIN' as const,
     ...overrides,

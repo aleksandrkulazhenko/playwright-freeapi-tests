@@ -1,4 +1,4 @@
-import { APIRequestContext, APIResponse, expect } from '@playwright/test';
+import { APIRequestContext } from '@playwright/test';
 import * as fs from 'fs';
 import { faker } from '@faker-js/faker';
 import * as path from 'path';
@@ -16,71 +16,51 @@ export class ProductClient {
   }
 
   async getAllProducts() {
-    const response = await this.request.get(
-      'https://api.freeapi.app/api/v1/public/randomproducts?page=1&limit=10&inc=category%252Cprice%252Cthumbnail%252Cimages%252Ctitle%252Cid&query=mens-watches',
-    );
-    expect(response.status()).toBe(200);
-
+    const response = await this.request.get('/api/v1/public/randomproducts');
     const body = await response.json();
-    expect(Array.isArray(body.data.data)).toBe(true);
-
     fs.writeFileSync(
       path.join(__dirname, '../../data/products.json'),
       JSON.stringify(body, null, 2),
     );
+
+    return { status: response.status(), body };
   }
 
   async createNewProduct() {
-    const response: APIResponse = await this.request.post(
-      'https://api.freeapi.app/api/v1/ecommerce/products',
-      {
-        multipart: this.newProduct,
-      },
-    );
-
-    expect(response.status()).toBe(201);
+    const response = await this.request.post('/api/v1/ecommerce/products', {
+      multipart: this.newProduct,
+    });
     const body = await response.json();
 
-    expect(body.data._id).toBeDefined();
+    if (body?.data?._id) {
+      this.productId = body.data._id;
+      this.productName = body.data.name;
+    }
 
-    this.productId = body.data._id;
-    this.productName = body.data.name;
+    return { status: response.status(), body };
   }
 
   async findProduct() {
-    const response = await this.request.get(
-      `https://api.freeapi.app/api/v1/ecommerce/products/${this.productId}`,
-    );
-
-    expect(response.ok()).toBeTruthy();
+    const response = await this.request.get(`/api/v1/ecommerce/products/${this.productId}`);
     const body = await response.json();
-
-    expect(body.data.name).toBe(this.productName);
+    return { status: response.status(), body };
   }
 
   async updateProductPrice() {
     const newPrice = faker.number.int({ min: 10, max: 9999 }).toString();
 
-    const response = await this.request.patch(
-      `https://api.freeapi.app/api/v1/ecommerce/products/${this.productId}`,
-      {
-        data: {
-          price: newPrice,
-          category: process.env.CATEGORY_ID,
-        },
+    const response = await this.request.patch(`/api/v1/ecommerce/products/${this.productId}`, {
+      data: {
+        price: newPrice,
+        category: process.env.CATEGORY_ID,
       },
-    );
-
-    expect(response.ok()).toBeTruthy();
+    });
     const body = await response.json();
-    expect(body.data.price.toString()).toBe(newPrice);
+    return { status: response.status(), body, newPrice };
   }
 
   async deleteProduct() {
-    const response = await this.request.delete(
-      `https://api.freeapi.app/api/v1/ecommerce/products/${this.productId}`,
-    );
-
-    expect([200, 204]).toContain(response.status());
+    const response = await this.request.delete(`/api/v1/ecommerce/products/${this.productId}`);
+    return { status: response.status() };
   }
 }

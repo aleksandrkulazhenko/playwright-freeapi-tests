@@ -10,7 +10,20 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [['allure-playwright', { outputFolder: 'allure-results' }]],
+  reporter: [
+    ['list'],
+    [
+      'allure-playwright',
+      {
+        outputFolder: 'allure-results',
+        suiteTitle: true,
+        environmentInfo: {
+          base_url: 'https://api.freeapi.app',
+          node_version: process.version,
+        },
+      },
+    ],
+  ],
   use: {
     baseURL: 'https://api.freeapi.app',
     extraHTTPHeaders: {

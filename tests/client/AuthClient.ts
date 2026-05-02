@@ -1,5 +1,4 @@
-import { faker } from '@faker-js/faker';
-import { APIRequestContext, expect } from '@playwright/test';
+import { APIRequestContext } from '@playwright/test';
 import { UserFactory, User } from '../factory/UserFactory';
 
 export class AuthClient {
@@ -14,13 +13,11 @@ export class AuthClient {
   }
 
   async register() {
-    const response = await this.request.post('https://api.freeapi.app/api/v1/users/register', {
+    const response = await this.request.post('/api/v1/users/register', {
       data: this.newUser,
     });
-
     const body = await response.json();
-    expect(response.status()).toBe(201);
-    expect(body.data.user.username).toBe(this.newUser.username);
+    return { status: response.status(), body };
   }
 
   async login() {
@@ -30,23 +27,18 @@ export class AuthClient {
         password: this.newUser.password,
       },
     });
-
     const body = await response.json();
-    expect(response.status()).toBe(200);
-    expect(body.data.accessToken).toBeDefined();
-
-    this.token = body.data.accessToken;
+    this.token = body?.data?.accessToken ?? '';
+    return { status: response.status(), body };
   }
 
   async getCurrentUser() {
-    const response = await this.request.get('https://api.freeapi.app/api/v1/users/current-user', {
+    const response = await this.request.get('/api/v1/users/current-user', {
       headers: {
         Authorization: `Bearer ${this.token}`,
       },
     });
-
-    expect(response.status()).toBe(200);
     const body = await response.json();
-    expect(body.data.username).toBe(this.newUser.username);
+    return { status: response.status(), body };
   }
 }
