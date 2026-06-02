@@ -16,8 +16,8 @@ export interface Product {
   };
 }
 
-export const ProductFactory = {
-  build: (overrides: Partial<Product> = {}): Product => ({
+export class ProductBuilder {
+  private data: Product = {
     name: faker.commerce.productName(),
     description: faker.commerce.productDescription(),
     price: faker.number.int({ min: 10, max: 9999 }).toString(),
@@ -28,6 +28,38 @@ export const ProductFactory = {
       mimeType: 'image/png',
       buffer: fs.readFileSync(path.join(__dirname, '../../data/icon.png')),
     },
-    ...overrides,
-  }),
+  };
+
+  withName(name: string): this {
+    this.data.name = name;
+    return this;
+  }
+
+  withDescription(description: string): this {
+    this.data.description = description;
+    return this;
+  }
+
+  withPrice(price: string): this {
+    this.data.price = price;
+    return this;
+  }
+
+  withStock(stock: string): this {
+    this.data.stock = stock;
+    return this;
+  }
+
+  withCategory(category: string): this {
+    this.data.category = category;
+    return this;
+  }
+
+  build(): Product {
+    return { ...this.data };
+  }
+}
+
+export const ProductFactory = {
+  build: (): Product => new ProductBuilder().build(),
 };

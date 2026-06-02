@@ -1,5 +1,6 @@
 import { APIRequestContext } from '@playwright/test';
 import { UserFactory, User } from '../factory/UserFactory';
+import { getMethod, postMethod } from '../helper/ApiHelper';
 
 export class AuthClient {
   readonly request: APIRequestContext;
@@ -13,32 +14,27 @@ export class AuthClient {
   }
 
   async register() {
-    const response = await this.request.post('/api/v1/users/register', {
+    return postMethod(this.request, '/api/v1/users/register', {
       data: this.newUser,
     });
-    const body = await response.json();
-    return { status: response.status(), body };
   }
 
   async login() {
-    const response = await this.request.post('/api/v1/users/login', {
+    const result = await postMethod<any>(this.request, '/api/v1/users/login', {
       data: {
         username: this.newUser.username,
         password: this.newUser.password,
       },
     });
-    const body = await response.json();
-    this.token = body?.data?.accessToken ?? '';
-    return { status: response.status(), body };
+    this.token = result.body?.data?.accessToken ?? '';
+    return result;
   }
 
   async getCurrentUser() {
-    const response = await this.request.get('/api/v1/users/current-user', {
+    return getMethod(this.request, '/api/v1/users/current-user', {
       headers: {
         Authorization: `Bearer ${this.token}`,
       },
     });
-    const body = await response.json();
-    return { status: response.status(), body };
   }
 }

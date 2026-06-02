@@ -1,5 +1,6 @@
 import { APIRequestContext } from '@playwright/test';
 import { ProductFactory } from '../factory/ProductFactory';
+import { postMethod } from '../helper/ApiHelper';
 
 export class ParametrizedClient {
   readonly request: APIRequestContext;
@@ -17,10 +18,9 @@ export class ParametrizedClient {
     const product = ProductFactory.build();
     product.price = price;
 
-    const response = await this.request.post('/api/v1/ecommerce/products', {
+    const result = await postMethod<any>(this.request, '/api/v1/ecommerce/products', {
       multipart: product,
     });
-    const body = await response.json();
-    return { status: response.status(), body, price };
+    return { ...result, price };
   }
 }

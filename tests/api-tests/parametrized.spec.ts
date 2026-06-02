@@ -20,9 +20,11 @@ test.describe('Параметризованные тесты — граничн�
       expect([200, 201, 400, 422]).toContain(status);
 
       if (status === 200 || status === 201) {
-        expect(body.success).toBe(true);
+        expect((body as any).success).toBe(true);
+        expect(typeof (body as any).data?.price).toBe('number');
       } else {
-        expect(body.success).toBe(false);
+        expect((body as any).success).toBe(false);
+        expect((body as any).message).toBeDefined();
       }
     });
   }

@@ -1,5 +1,6 @@
 import { APIRequestContext } from '@playwright/test';
 import { ProductFactory } from '../factory/ProductFactory';
+import { getMethod, postMethod } from '../helper/ApiHelper';
 
 export class NegativeClient {
   readonly request: APIRequestContext;
@@ -9,32 +10,38 @@ export class NegativeClient {
   }
 
   async getProductWithInvalidId() {
-    const response = await this.request.get('/api/v1/ecommerce/products/999999999900000000001234');
-    const body = await response.json();
-    return { status: response.status(), body };
+    return getMethod(this.request, '/api/v1/ecommerce/products/999999999900000000001234');
   }
 
   async createProductWithoutToken() {
     const productData = ProductFactory.build();
-
-    const response = await this.request.post('/api/v1/ecommerce/products', {
+    return postMethod(this.request, '/api/v1/ecommerce/products', {
       multipart: productData,
-      headers: {
-        Authorization: '',
-      },
+      headers: { Authorization: '' },
     });
-    const body = await response.json();
-    return { status: response.status(), body };
   }
 
   async createProductWithInvalidPrice() {
     const productData = ProductFactory.build();
     productData.price = 'сто';
-
-    const response = await this.request.post('/api/v1/ecommerce/products', {
+    return postMethod(this.request, '/api/v1/ecommerce/products', {
       multipart: productData,
     });
-    const body = await response.json();
-    return { status: response.status(), body };
+  }
+
+  async createProductWithMissingName() {
+    const productData = ProductFactory.build();
+    const { name: _omit, ...withoutName } = productData as any;
+    return postMethod(this.request, '/api/v1/ecommerce/products', {
+      multipart: withoutName,
+    });
+  }
+
+  async createProductWithInvalidToken() {
+    const productData = ProductFactory.build();
+    return postMethod(this.request, '/api/v1/ecommerce/products', {
+      multipart: productData,
+      headers: { Authorization: 'Bearer invalidToken' },
+    });
   }
 }

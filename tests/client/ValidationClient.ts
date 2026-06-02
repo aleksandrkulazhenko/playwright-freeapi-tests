@@ -1,4 +1,5 @@
 import { APIRequestContext } from '@playwright/test';
+import { getMethod } from '../helper/ApiHelper';
 
 export class ValidationClient {
   readonly request: APIRequestContext;
@@ -8,14 +9,10 @@ export class ValidationClient {
   }
 
   async getRandomProducts() {
-    const response = await this.request.get('/api/v1/public/randomproducts');
-    const body = await response.json();
-    return { status: response.status(), body };
+    return getMethod(this.request, '/api/v1/public/randomproducts');
   }
 
   async getProductById(productId: number) {
-    const response = await this.request.get(`/api/v1/public/randomproducts/${productId}`);
-    const body = await response.json();
-    return { status: response.status(), body };
+    return getMethod(this.request, `/api/v1/public/randomproducts/${productId}`);
   }
 }
